@@ -1,0 +1,12 @@
+# Jekyll stuff
+_site
+.sass-cache
+.jekyll-cache
+.jekyll-metadata
+.bundle
+vendor
+
+# VS Code
+.vscode
+
+

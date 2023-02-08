@@ -1,1 +1,10 @@
-theme: jekyll-theme-cayman
+title: CS184 Projects
+
+# Build settings
+remote_theme: just-the-docs/just-the-docs
+plugins:
+- jekyll-remote-theme
+
+aux_links:
+  "Dark Mode":
+    - "#"
