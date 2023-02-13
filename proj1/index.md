@@ -65,3 +65,96 @@ I also implemented jittered supersampling, which takes samples from a random poi
 Normal                         |  Jittered
 :----------------------------------:|:--------------------------------------:
 ![normal](./task2e_normal.png)  |  ![jittered](./task2e_jittered.png)
+
+## Task 3: Transforms
+
+To implement transforms, I implemented the following matrices:
+
+Translate                           |  Scale | Rotate
+:----------------------------------:|:--------------------------------------:|:-----:
+$$\begin{bmatrix}1 & 0 & d_x \\0 & 1 & d_y\\0 & 0 & 1 \end{bmatrix} $$   |  $$\begin{bmatrix}s_x & 0 & 0 \\0 & s_y & 0\\0 & 0 & 1 \end{bmatrix} $$ | $$\begin{bmatrix}\cos(\theta) & -\sin(\theta) & 0 \\ \sin(\theta) & \cos(\theta) & 0\\0 & 0 & 1 \end{bmatrix} $$
+
+Here is cubeman pretending to be a cube:
+
+SVG                         |  PNG Screenshot
+:----------------------------------:|:--------------------------------------:
+![svg](./my_robot.svg)  |  ![png](./task3robot.png)
+
+I also added two buttons (N and M) to rotate the viewport. To accomplish this, I added a function that multiplied the `svg_to_ndc` matrix by the following rotation matrix:
+
+$$\begin{bmatrix} \cos(\theta) & -\sin(\theta) & (1 - \cos(\theta) + \sin(\theta)) \\ \sin(\theta) & \cos(\theta) & (1 - \sin(\theta) - \cos(\theta)) \\0 & 0 & 1 \end{bmatrix}$$
+
+This is different from the other rotation matrix, because this one rotates around the center of the view (0.5, 0.5), rather than the origin. In order to make scaling and panning work correctly (since in the given implementation, it would always reset the view, clearing rotation), I changed the `move_view` function to set the `svg_to_ndc` matrix to the following:
+
+$$\begin{bmatrix} m_{0,0} & m_{0,1} & (m_{0,2} + d_x) + 0.5 (z - 1) m_{2,2} \\m_{1,0} & m_{1,1} & (m_{1,2} + d_y) + 0.5 (z - 1) m_{2,2} \\m_{2,0} & m_{2,1} & z m_{2,2} \end{bmatrix}$$
+
+Where $$(d_x, d_y)$$ is the amount of pan, $$z$$ is the zoom factor, and $$m$$ is the original `svg_to_ndc` matrix.
+
+Here are some screenshots of cubeman rotated and zoomed in:
+
+:----------------------------------:|:--------------------------------------:
+![](./task3rotated1.png)  |  ![](./task3rotated2.png)
+![](./task3rotated3.png)  |  ![](./task3rotated4.png)
+
+## Task 4: Barycentric Coordinates
+
+Barycentric coordinates are locations with respect to the corners of a triangle. For example, the  barycentric coordinates $$(0.1, 0.3, 0.6)$$ represent a point that is relatively far away from $$p_0$$, closer to $$p_1$$, and much closer to $$p_2$$. They can also be interpreted as "If I placed these weights at the corners of the triangle, this location would be the center of mass".
+
+In the left example below, higher $$\alpha$$ values are blue, higher $$\beta$$ values are green, and higher $$\gamma$$ values are red. The resulting gradient shows how the barycentric coordinates are distributed within one triangle. On the right is the result of `test7.svg`. 
+
+
+Single Triangle                         |  test7.svg
+:----------------------------------:|:--------------------------------------:
+![](./task4_tricolor.png) |  ![png](./task4wheel.png)
+
+
+## Task 5: Pixel Sampling for Texture Mapping
+
+Pixel sampling is one technique for mapping a texture onto a given polygon (triangles, for this project). For every pixel in the triangle, it's location within the texture is calculated by using Barycentric coordinates to map from the original triangle to the texture triangle. Then, its color within the texture is calculated using a sampling technique:
+
+ - In nearest pixel sampling, the color of the nearest pixel in the texture is used. For example, given location $$(6.32, 22.99)$$ in the texture, the color at $$(6, 22)$$ would be used (which has a location of $$(6.5, 22.5)$$.
+ - In bilinear pixel sampling, the colors of the 4 nearest pixels are linearly interpolated. For example, given location $$(6.32, 22.99)$$ in the texture, the colors at $$(5, 22)$$, $$(6, 22)$$, $$(5, 23)$$, and $$(5, 23)$$ would be linearly interpolated based on the proportions 0.82 in the x-axis, and 0.49 in the y-axis.
+
+Nearest pixel sampling is simpler, but bilinear sampling can be smoother when the texture is magnified. For example, here's the Campanile using both sampling methods (open these images in a new tab to view them at native resolution):
+
+Nearest Pixel Sampling (1 sample per pixel)  |  Bilinear Sampling (1 sample per pixel)
+:----------------------------------:|:--------------------------------------:
+![](./task5c1.png) |  ![png](./task5c2.png)
+
+Nearest Pixel Sampling (16 samples per pixel)  |  Bilinear Sampling (16 samples per pixel)
+:----------------------------------:|:--------------------------------------:
+![](./task5c3.png) |  ![png](./task5c4.png)
+
+Interestingly, the Campinile looks "sharper" with nearest pixel sampling, although the version with bilinear sampling looks more realistic.
+
+## Task 6: Level Sampling with Mipmaps for Texture Mapping
+
+When mapping a high-resolution texture onto a low-resolution triangle, aliasing can occur when high-resolution details get sampled. One solution to this is to use lower-resolution versions of the texture for lower resolution triangles. If we precalculate these lower-resolution textures, we can store them in a mipmap.
+
+Level sampling is the process of choosing which "level" in the mipmap to use. There are a few ways to do this:
+ - always sampling from the full-resolution image (`L_ZERO`).
+ - sampling from the texture whose resolution best matches the output triangle (`L_NEAREST`).
+ - linearly interpolating between the two textures whose resolution best maches the output triangle (`L_LINEAR`)
+
+The "ideal" level was calculated by using the uv-barycentric coordinates of $$(x, y)$$, $$(x + 1, y)$$, and $$(x, y + 1)$$, then subtracting them and scaling them by the full-resolution texture size to obtain $$(\frac{du}{dx}, \frac{dv}{dx})$$ and $$(\frac{du}{dy}, \frac{dv}{dy})$$. Taking the max of the magnitude of these two vectors gives the approximate "pixels per pixel" - that is, how many linear pixels in the texture are covered by a pixel in the result. Taking the base-2 log of this gives the "ideal" mipmap level (since each mipmap has half the resolution of the previous one).
+
+At this point in the project, there are three possible techniques used in creating the image:
+ - __pixel sampling method__: Using nearest pixel sampling (`P_NEAREST`) is efficient, but can alias when mapping high resolution textures onto low-resolution triangles. In the reverse case (mapping low-resolution textures onto high-resolution triangles), nearest pixel sampling also tends to "pixellate" the image, with sharp bounderies between the texture's pixels. In contrast, bilinear pixel sampling (`P_LINEAR`) is slower, but provides a little bit of antialiasing when mapping higher-resolution textures, and reduces "pixillation" when mapping lower-resolution textures.
+ - __level sampling method__: Mip-mapping techniques use significantly more memory, but significantly reduces aliasing when the ideal level is used. `L_NEAREST` provides a time-efficient approximation of the ideal level, while `L_LINEAR` provides a better approximation at the cost of speed.
+ - __supersampling__: Supersampling significantly reduces aliasing, but is very costly in terms of both memory usage and speed. 
+
+Here's a comparison between different combinations of these techniques. These are:
+ - top left: (L_ZERO, P_NEAREST)
+ - top right: (L_ZERO, P_LINEAR)
+ - bottom left: (L_NEAREST, P_NEAREST)
+ - bottom right: (L_NEAREST, P_LINEAR)
+  
+:----------------------------------:|:--------------------------------------:
+![](./task6w1.png) |  ![png](./task6w2.png)
+![](./task6w3.png) |  ![png](./task6w4.png)
+
+Note that the top-left image shows significant aliasing - there's the appearance of digital "snow" as high-frequency details are sampled. `P_LINEAR` (top-right) reduces this a little bit, but `L_NEAREST` (bottom-left) removes aliasing almost entirely. Combining `L_NEAREST` and `P_LINEAR` (bottom-right) results in the smoothest-looking image.
+
+## Where to find this webpage
+
+[https://cal-cs184-student.github.io/sp23-proj-webpage-sberkun/proj1/](https://cal-cs184-student.github.io/sp23-proj-webpage-sberkun/proj1/)
