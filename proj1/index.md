@@ -9,6 +9,19 @@ mathjax: true
 
 ![rasterized lion](./lion.png)
 
+
+## Overview
+
+In this project, I implemented parts of a simple rasterizer. This rasterizer can draw simple shapes from an SVG image, including:
+ - triangles
+ - less jaggy triangles
+ - rotated triangles
+ - triangles with 3-color gradiants
+ - trangles with image textures
+ - less jaggy triangles with image textures
+
+With this diverse array of shapes, lots of cool images are possible (except for the one at the top of this page, since that one uses semi-opaque lines, and my rasterizer doesn't know how to draw those). 
+
 ## Task 1: Drawing Single-Color Triangles
 
 To rasterize a triangle, my naive algorithm goes through the following process:
