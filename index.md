@@ -3,4 +3,6 @@ title: Home
 nav_order: 0
 ---
 
-These are my 184 projects! Navigate using the left bar.
+_Every triangle is a love triangle when you love triangles_
+
+-Pythagoras
