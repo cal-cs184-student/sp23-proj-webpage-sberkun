@@ -162,3 +162,6 @@ Before | After 2 rounds of loop subdivision | After 5 rounds of loop subdivision
 :--:|:--:|:--:
 ![](./task6/modbefore.png) | ![](./task6/modafter2.png) | ![](./task6/modafter5.png)
 
+## Where to find this webpage
+
+[https://cal-cs184-student.github.io/sp23-proj-webpage-sberkun/proj2/](https://cal-cs184-student.github.io/sp23-proj-webpage-sberkun/proj2/)
