@@ -188,3 +188,8 @@ Image   |  Rate map
 
 
 As expected, the shadowed parts of the image (which require deeper ray depths to render accurately), tend to have more relative variance, and thus need more samples to converge. Unfortunately, Russian roulette contributes to higher variance, since it inherently causes a twin-peaked distribution for indirect lighting.  
+
+
+## Where to find this webpage
+
+[https://cal-cs184-student.github.io/sp23-proj-webpage-sberkun/proj3-1/](https://cal-cs184-student.github.io/sp23-proj-webpage-sberkun/proj3-1/)
