@@ -127,7 +127,7 @@ Here are some example images with global illumination turned on:
 :----------------------------------:|:--------------------------------------:
 ![](task4/banana_full_1024.png)  |  ![](task4/spheres_full_1024.png)
 
-Note that the edges cardboard box in the banana render are a little bit more realistic, and the sphere render shows "color bleeding" from the wall on the spheres. If we decompose the sphere render into direct illumination and indirect illumination, we can see this effect more clearly:
+Note that the edges of the box in the banana render are less shadowy, and the sphere render shows "color bleeding" from the wall on the spheres. If we decompose the sphere render into direct illumination and indirect illumination, we can see this effect more clearly:
 
 Direct Illumination   |  Indirect Illumination
 :----------------------------------:|:--------------------------------------:
