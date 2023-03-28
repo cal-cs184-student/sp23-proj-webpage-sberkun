@@ -85,7 +85,7 @@ Note that as $$\alpha$$ gets smaller, the material approximates a mirror more, a
 
 At first glance, the Beckmann distribution function is poor at approximating a mirror (compared to an actual mirror material). At very low alpha values, it creates noise, as exhibited by the $$\alpha = 0.005$$ render. 
 
-However, this is simply caused by the architecture of the pathtracer. If the implementation of `is_delta` for microfacet materials is changed from `return false;` to `return alpha <= 0.15;`. 
+However, this is simply caused by the architecture of the pathtracer. If the implementation of `is_delta` for microfacet materials is changed from `return false;` to `return alpha <= 0.15;`, the amount of noise is reduced significantly.
 
 Here's a comparison of the results with the improved implementation:
 
@@ -103,7 +103,7 @@ hemisphere sampling, delta material | Beckmann sampling, delta material
  :---------------------:|:----------------------:
  ![](task2/bunny_better_cosine.png)  |  ![](task2/bunny_better_importance.png)
 
-In the above renders, Beckmann distribution reduces the noise when compared to cosine hemisphere sampling. This is especially apparent in the body of the bunny itself, which is lit mainly via indirect lighting. Treating the material as a delta material reduces the noise even further, especially in the walls that are indirectly lit by the bunny.
+In the above renders, Beckmann distribution sampling reduces the noise when compared to cosine hemisphere sampling. This is especially apparent in the body of the bunny itself, which is lit mainly via indirect lighting. Treating the material as a delta material reduces the noise even further, especially in the walls that are indirectly lit by the bunny.
 
 Finally, here are two more materials (mercury and cobalt).
 
