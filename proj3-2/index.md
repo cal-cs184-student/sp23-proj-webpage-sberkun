@@ -109,7 +109,7 @@ Finally, here are two more materials (mercury and cobalt).
 
 Mercury | Cobalt
  :---------------------:|:----------------------:
-  $$\eta = (1.8795, 1.5472, 1.1353)$$, $$k = (5.1076, 4.6437, 3.9980)$$  |  $$\eta = (2.1849, 2.0500, 1.7925)$$, $$k = (4.0971, 3.8200, 3.3775)$$
+  $$\alpha = 0.015$$<br>$$\eta = (1.8795, 1.5472, 1.1353)$$<br>$$k = (5.1076, 4.6437, 3.9980)$$  | $$\alpha=0.25$$<br>$$\eta = (2.1849, 2.0500, 1.7925)$$<br>$$k = (4.0971, 3.8200, 3.3775)$$
  ![](task2/lucy_hg.png)  |  ![](task2/lucy_co.png)
 
 Disappointingly, they both just look silver-ish.
